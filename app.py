@@ -5,6 +5,7 @@ import joblib
 import requests
 import matplotlib.pyplot as plt
 import seaborn as sns
+import base64
 
 # Load models
 work_model = joblib.load("weather_model.pkl")
@@ -14,7 +15,7 @@ le = joblib.load("label_encoder.pkl")
 # Load dataset with location
 df = pd.read_csv("updated_weather_data.csv")
 
-st.title("🌦️ Work Suitability and Weather Prediction App")
+st.title("🌦️ Work Suitability and Weather Prediction System")
 
 # 📍 Step 1: Select Location
 if 'Location' in df.columns:
@@ -253,3 +254,75 @@ with st.expander("📊 Show Weather Visualizations"):
         st.pyplot(fig_flood)
     else:
         st.warning("⚠️ 'Flood_Risk' column not found.")
+
+
+
+
+
+
+
+
+def set_fluorescent_background(image_file):
+    with open(image_file, "rb") as file:
+        encoded = base64.b64encode(file.read()).decode()
+
+    st.markdown(f"""
+        <style>
+        .stApp {{
+            background-image: url("data:image/jpeg;base64,{encoded}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }}
+
+        .block-container {{
+            background: rgba(255, 255, 102, 0.6); /* Fluorescent bright yellow */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 0 20px 8px rgba(255, 255, 102, 0.8);
+            border: 2px solid rgba(255, 255, 102, 0.9);
+            margin-top: 2rem;
+            color: #222;
+            font-weight: 600;
+            text-shadow: 0 0 5px #fff, 0 0 10px rgba(255,255,102,0.8);
+        }}
+
+        h1, h2, h3, h4, h5, h6, p, label, .stText, .stMarkdown {{
+            color: #222 !important;
+            text-shadow: 0 0 5px #fff, 0 0 10px rgba(255,255,102,0.9);
+        }}
+
+        .stButton > button {{
+            background-color: #ffff33 !important;
+            color: #222 !important;
+            border: none;
+            border-radius: 12px;
+            padding: 0.6rem 1.2rem;
+            font-weight: 700;
+            box-shadow: 0 0 10px 4px #ffff33;
+            transition: background-color 0.3s ease;
+        }}
+        .stButton > button:hover {{
+            background-color: #fffa66 !important;
+            box-shadow: 0 0 15px 6px #ffff33;
+        }}
+
+        .stSlider > div {{
+            background-color: rgba(135, 206, 250, 0.80);
+            border-radius: 8px;
+        }}
+        </style>
+    """, unsafe_allow_html=True)
+
+set_fluorescent_background("gail_bg.jpg")
+
+
+
+
+
+
+
+
