@@ -43,13 +43,13 @@ input_data = pd.DataFrame([{
 }])
 
 # Function to check flood risk based on predicted label and numeric conditions
-def check_flood_risk(predicted_label, precip, humidity, wind):
+#def check_flood_risk(predicted_label, precip, humidity, wind):
     # Check flood keywords in label
-    flood_keywords = ["flood", "heavy rainfall", "storm", "cyclone"]
-    label_flood = any(k in predicted_label.lower() for k in flood_keywords)
+   # flood_keywords = ["flood", "heavy rainfall", "storm", "cyclone"]
+  #  label_flood = any(k in predicted_label.lower() for k in flood_keywords)
     # Also use numeric thresholds to flag flood risk
-    numeric_flood = (precip >= 8) or (precip >= 6 and humidity > 70) or (precip >= 4 and wind > 25)
-    return label_flood or numeric_flood
+   # numeric_flood = (precip >= 8) or (precip >= 6 and humidity > 70) or (precip >= 4 and wind > 25)
+   # return label_flood or numeric_flood
 
 # Manual Prediction Button
 if st.button("🔍 Predict", key="manual_predict_btn"):
@@ -58,10 +58,10 @@ if st.button("🔍 Predict", key="manual_predict_btn"):
     st.info(f"🌤️ **Predicted Weather:** {predicted_weather_label}")
 
     # Show flood risk for manual input
-    if check_flood_risk(predicted_weather_label, precip, humidity, wind):
-        st.error("🌊 Flood Risk (Manual Input): HIGH – Take precautions!")
-    else:
-        st.success("✅ Flood Risk (Manual Input): LOW")
+ #   if check_flood_risk(predicted_weather_label, precip, humidity, wind):
+ #       st.error("🌊 Flood Risk (Manual Input): HIGH – Take precautions!")
+ #   else:
+ #       st.success("✅ Flood Risk (Manual Input): LOW")
 
     # Add predicted weather description encoded to input data for work suitability model
     input_data["Weather_Description"] = predicted_weather_encoded
@@ -155,13 +155,13 @@ if st.button("🚀 Fetch & Predict Real-Time Weather", key="realtime_predict_btn
         df_input["Weather_Description"] = predicted_weather_encoded
         
         # Flood risk for realtime input
-        if check_flood_risk(predicted_weather_label, 
-                            weather_data["Precipitation_mm"], 
-                            weather_data["Humidity_pct"], 
-                            weather_data["Wind_Speed_kmh"]):
-            st.error("🌊 Flood Risk (Real-Time): HIGH – Take precautions!")
-        else:
-            st.success("✅ Flood Risk (Real-Time): LOW")
+     #   if check_flood_risk(predicted_weather_label, 
+     #                       weather_data["Precipitation_mm"], 
+     #                       weather_data["Humidity_pct"], 
+     #                       weather_data["Wind_Speed_kmh"]):
+     #       st.error("🌊 Flood Risk (Real-Time): HIGH – Take precautions!")
+     #   else:
+      #      st.success("✅ Flood Risk (Real-Time): LOW")
 
         realtime_strict = (
             weather_data["Temperature_C"] < 5 or weather_data["Temperature_C"] > 40 or
