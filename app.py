@@ -262,7 +262,10 @@ with st.expander("📊 Show Weather Visualizations"):
 
 
 
-def set_fluorescent_background(image_file):
+def set_navy_blue_background(image_file):
+    import base64
+    import streamlit as st
+
     with open(image_file, "rb") as file:
         encoded = base64.b64encode(file.read()).decode()
 
@@ -277,47 +280,46 @@ def set_fluorescent_background(image_file):
         }}
 
         .block-container {{
-            background: rgba(255, 255, 102, 0.6); /* Fluorescent bright yellow */
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(0, 0, 128, 0.6);  /* Navy blue overlay */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             padding: 2rem;
             border-radius: 20px;
-            box-shadow: 0 0 20px 8px rgba(255, 255, 102, 0.8);
-            border: 2px solid rgba(255, 255, 102, 0.9);
+            box-shadow: 0 0 20px 8px rgba(0, 0, 128, 0.5);
+            border: 2px solid rgba(0, 0, 128, 0.7);
             margin-top: 2rem;
-            color: #222;
+            color: #f0f0f0;
             font-weight: 600;
-            text-shadow: 0 0 5px #fff, 0 0 10px rgba(255,255,102,0.8);
         }}
 
         h1, h2, h3, h4, h5, h6, p, label, .stText, .stMarkdown {{
-            color: #222 !important;
-            text-shadow: 0 0 5px #fff, 0 0 10px rgba(255,255,102,0.9);
+            color: #ffffff !important;
         }}
 
         .stButton > button {{
-            background-color: #ffff33 !important;
-            color: #222 !important;
+            background-color: #001F54 !important;
+            color: #ffffff !important;
             border: none;
             border-radius: 12px;
             padding: 0.6rem 1.2rem;
             font-weight: 700;
-            box-shadow: 0 0 10px 4px #ffff33;
+            box-shadow: 0 0 10px 4px #001F54;
             transition: background-color 0.3s ease;
         }}
         .stButton > button:hover {{
-            background-color: #fffa66 !important;
-            box-shadow: 0 0 15px 6px #ffff33;
+            background-color: #003366 !important;
+            box-shadow: 0 0 15px 6px #001F54;
         }}
 
         .stSlider > div {{
-            background-color: rgba(135, 206, 250, 0.80);
+            background-color: rgba(0, 0, 128, 0.4);
             border-radius: 8px;
         }}
         </style>
     """, unsafe_allow_html=True)
 
-set_fluorescent_background("gail_bg.jpg")
+# Call the function
+set_navy_blue_background("gail_bg.jpg")
 
 
 
