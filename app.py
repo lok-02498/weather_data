@@ -343,4 +343,17 @@ if "intensified" not in st.session_state:
 
 # Call the function
 set_purple_background("gail_bg.jpg", intensified=st.session_state.intensified)
+st.markdown("""
+---
+<center><span style="font-size:20px; font-weight:600;">Developed by Lokesh Deshwal | 2025</span></center>
+""", unsafe_allow_html=True)
 
+
+st.markdown("""
+---
+<center>
+    <p style="font-size:16px; color:gray; font-weight:500; margin-top:20px;">
+        &copy; 2025 Lokesh Deshwal. All rights reserved.
+    </p>
+</center>
+""", unsafe_allow_html=True)
