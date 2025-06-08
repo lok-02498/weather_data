@@ -262,12 +262,19 @@ with st.expander("📊 Show Weather Visualizations"):
 
 
 
-def set_navy_blue_background(image_file):
+
+def set_purple_background(image_file, intensified=False):
     import base64
     import streamlit as st
 
     with open(image_file, "rb") as file:
         encoded = base64.b64encode(file.read()).decode()
+
+    # Overlay intensity settings
+    overlay_opacity = 0.7 if not intensified else 0.92
+    overlay_blur = 6 if not intensified else 14
+    box_shadow_opacity = 0.45 if not intensified else 0.75
+    border_opacity = 0.6 if not intensified else 0.9
 
     st.markdown(f"""
         <style>
@@ -280,51 +287,60 @@ def set_navy_blue_background(image_file):
         }}
 
         .block-container {{
-            background: rgba(0, 0, 128, 0.6);  /* Navy blue overlay */
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            background: rgba(64, 0, 90, {overlay_opacity});
+            backdrop-filter: blur({overlay_blur}px);
+            -webkit-backdrop-filter: blur({overlay_blur}px);
             padding: 2rem;
             border-radius: 20px;
-            box-shadow: 0 0 20px 8px rgba(0, 0, 128, 0.5);
-            border: 2px solid rgba(0, 0, 128, 0.7);
-            margin-top: 2rem;
-            color: #f0f0f0;
+            box-shadow: 0 0 20px 8px rgba(128, 0, 128, {box_shadow_opacity});
+            border: 2px solid rgba(186, 85, 211, {border_opacity});
+            color: #ffffff;
             font-weight: 600;
+            transition: background 0.5s ease, box-shadow 0.5s ease;
         }}
 
         h1, h2, h3, h4, h5, h6, p, label, .stText, .stMarkdown {{
             color: #ffffff !important;
+            text-shadow: 0 0 4px rgba(255, 255, 255, 0.2);
         }}
 
         .stButton > button {{
-            background-color: #001F54 !important;
-            color: #ffffff !important;
+            background-color: #bb86fc !important;
+            color: #000000 !important;
             border: none;
             border-radius: 12px;
             padding: 0.6rem 1.2rem;
             font-weight: 700;
-            box-shadow: 0 0 10px 4px #001F54;
-            transition: background-color 0.3s ease;
+            box-shadow: 0 0 12px 4px rgba(187, 134, 252, 0.7);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
         }}
+
         .stButton > button:hover {{
-            background-color: #003366 !important;
-            box-shadow: 0 0 15px 6px #001F54;
+            background-color: #d0a6ff !important;
+            box-shadow: 0 0 18px 6px rgba(187, 134, 252, 0.9);
         }}
 
         .stSlider > div {{
-            background-color: rgba(0, 0, 128, 0.4);
+            background-color: rgba(128, 0, 128, 0.3);
             border-radius: 8px;
+        }}
+
+        .result-box {{
+            background: rgba(75, 0, 130, 0.95) !important;
+            color: #ffffff !important;
+            font-weight: 900!important;
+            padding: 1rem !important;
+            border-radius: 16px !important;
+            box-shadow: 0 0 15px 6px rgba(138, 43, 226, 0.9) !important;
+            margin-top: 1rem !important;
         }}
         </style>
     """, unsafe_allow_html=True)
 
+# Initialize session state if needed
+if "intensified" not in st.session_state:
+    st.session_state.intensified = False
+
 # Call the function
-set_navy_blue_background("gail_bg.jpg")
-
-
-
-
-
-
-
+set_purple_background("gail_bg.jpg", intensified=st.session_state.intensified)
 
