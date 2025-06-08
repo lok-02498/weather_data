@@ -185,83 +185,93 @@ if st.button("🚀 Fetch & Predict Real-Time Weather", key="realtime_predict_btn
         if st.session_state.get('manual_strict', False) and realtime_strict:
             st.warning("🚨 Alert: Harsh weather conditions detected BOTH in manual input and real-time data for today!")
 
-st.markdown("---")
-with st.expander("📊 Show Weather Visualizations"):
+df['Date_Time'] = pd.to_datetime(df['Date_Time'], errors='coerce')
 
-    # Convert Date_Time column to datetime format
-    if 'Date_Time' in df.columns:
-        df['Date_Time'] = pd.to_datetime(df['Date_Time'], errors='coerce')
+# Clean Location column: remove leading/trailing spaces (common cause for filtering bugs)
+df['Location'] = df['Location'].str.strip()
 
-    # 📈 Temperature trend for selected location
-    if not loc_data.empty:
-        st.subheader(f"📈 Temperature Trend in {selected_location}")
-        fig_temp, ax_temp = plt.subplots(figsize=(10, 4))
-        loc_data_sorted = loc_data.copy()
-        loc_data_sorted['Date_Time'] = pd.to_datetime(loc_data_sorted['Date_Time'], errors='coerce')
-        loc_data_sorted = loc_data_sorted.dropna(subset=['Date_Time'])
-        loc_data_sorted = loc_data_sorted.sort_values("Date_Time")
-        if 'Temperature_C' in loc_data_sorted.columns:
-            sns.lineplot(data=loc_data_sorted, x='Date_Time', y='Temperature_C', ax=ax_temp, marker="o")
-            ax_temp.set_xlabel("Date")
-            ax_temp.set_ylabel("Temperature (°C)")
-            plt.xticks(rotation=45)
-            st.pyplot(fig_temp)
-        else:
-            st.warning("⚠️ 'Temperature_C' column is missing in the data.")
+# Location selector dropdown (must be outside visualization expander)
+selected_location = st.selectbox("Select Location", options=df['Location'].unique())
 
-    # ✅ Work Suitability Pie Chart
-    if 'Work_Suitability' in df.columns:
-        st.subheader("✅ Work Suitability Distribution")
-        suit_counts = df['Work_Suitability'].value_counts()
-        fig_pie, ax_pie = plt.subplots()
-        ax_pie.pie(suit_counts, labels=suit_counts.index, autopct='%1.1f%%', startangle=90)
-        ax_pie.axis('equal')
-        st.pyplot(fig_pie)
+# Filter data based on selected location
+filtered_df = df[df['Location'] == selected_location]
+
+with st.expander("📊 Weather Data Visualizations"):
+
+    if filtered_df.empty:
+        st.warning(f"No data available for location: {selected_location}")
     else:
-        st.warning("⚠️ 'Work_Suitability' column not found.")
+        st.write(f"Showing data for: **{selected_location}**")
 
-    # 🌦️ Weather Description Count (Bar chart)
-    if 'Weather_Description' in df.columns:
-        st.subheader("🌦️ Weather Description Frequency")
-        fig_desc, ax_desc = plt.subplots(figsize=(10, 4))
-        desc_counts = df['Weather_Description'].value_counts()
-        sns.barplot(x=desc_counts.index, y=desc_counts.values, ax=ax_desc)
-        ax_desc.set_ylabel("Count")
-        ax_desc.set_xlabel("Weather Description")
+        # Example visualization 1: Temperature over time
+        fig1, ax1 = plt.subplots(figsize=(10, 4))
+        sns.lineplot(data=filtered_df.sort_values('Date_Time'), x='Date_Time', y='Temperature_C', marker='o', ax=ax1)
+        ax1.set_title("Temperature Over Time")
+        ax1.set_xlabel("Date and Time")
+        ax1.set_ylabel("Temperature (°C)")
         plt.xticks(rotation=45)
-        st.pyplot(fig_desc)
-    else:
-        st.warning("⚠️ 'Weather_Description' column not found.")
+        st.pyplot(fig1)
 
-    # ☔ Rainfall Distribution by Location (Box plot)
-    if 'Precipitation_mm' in df.columns and 'Location' in df.columns:
-        st.subheader("☔ Precipitation Distribution by Location")
-        fig_box, ax_box = plt.subplots(figsize=(10, 4))
-        sns.boxplot(data=df, x="Location", y="Precipitation_mm", ax=ax_box)
+        # Example visualization 2: Humidity over time
+        fig2, ax2 = plt.subplots(figsize=(10, 4))
+        sns.lineplot(data=filtered_df.sort_values('Date_Time'), x='Date_Time', y='Humidity_pct', marker='o', ax=ax2, color='orange')
+        ax2.set_title("Humidity Over Time")
+        ax2.set_xlabel("Date and Time")
+        ax2.set_ylabel("Humidity (%)")
         plt.xticks(rotation=45)
-        st.pyplot(fig_box)
+        st.pyplot(fig2)
+
+        # Example visualization 3: Work Suitability distribution (if categorical)
+        st.write("Work Suitability Distribution")
+        st.bar_chart(filtered_df['Work_Suitability'].value_counts())
+with st.expander("📈 More Weather Visualizations"):
+
+    if filtered_df.empty:
+        st.warning("No data available for this location.")
     else:
-        st.warning("⚠️ Columns 'Precipitation_mm' or 'Location' are missing.")
+        # 1. Precipitation over time
+        fig3, ax3 = plt.subplots(figsize=(10, 4))
+        sns.lineplot(data=filtered_df.sort_values('Date_Time'), x='Date_Time', y='Precipitation_mm', marker='o', ax=ax3, color='blue')
+        ax3.set_title("Precipitation Over Time (mm)")
+        ax3.set_xlabel("Date and Time")
+        ax3.set_ylabel("Precipitation (mm)")
+        plt.xticks(rotation=45)
+        st.pyplot(fig3)
 
-    # 🌊 Flood Risk Distribution (Bar chart)
-    if 'Flood_Risk' in df.columns:
-        st.subheader("🌊 Flood Risk Frequency")
-        fig_flood, ax_flood = plt.subplots()
-        flood_counts = df['Flood_Risk'].value_counts()
-        sns.barplot(x=flood_counts.index, y=flood_counts.values, ax=ax_flood)
-        ax_flood.set_xlabel("Flood Risk")
-        ax_flood.set_ylabel("Count")
-        st.pyplot(fig_flood)
-    else:
-        st.warning("⚠️ 'Flood_Risk' column not found.")
+        # 2. Wind Speed over time
+        fig4, ax4 = plt.subplots(figsize=(10, 4))
+        sns.lineplot(data=filtered_df.sort_values('Date_Time'), x='Date_Time', y='Wind_Speed_kmh', marker='o', ax=ax4, color='green')
+        ax4.set_title("Wind Speed Over Time (km/h)")
+        ax4.set_xlabel("Date and Time")
+        ax4.set_ylabel("Wind Speed (km/h)")
+        plt.xticks(rotation=45)
+        st.pyplot(fig4)
 
+        # 3. Weather Description count plot
+        st.write("Weather Description Distribution")
+        fig5, ax5 = plt.subplots(figsize=(8, 5))
+        sns.countplot(data=filtered_df, y='Weather_Description', order=filtered_df['Weather_Description'].value_counts().index, palette='viridis', ax=ax5)
+        ax5.set_title("Frequency of Weather Descriptions")
+        st.pyplot(fig5)
 
+        # 4. Flood Risk Pie Chart (if categorical 'Yes'/'No')
+        flood_counts = filtered_df['Flood_Risk'].value_counts()
+        st.write("Flood Risk Distribution")
+        fig6, ax6 = plt.subplots()
+        ax6.pie(flood_counts, labels=flood_counts.index, autopct='%1.1f%%', startangle=90, colors=['red', 'lightgrey'])
+        ax6.axis('equal')
+        st.pyplot(fig6)
 
-
-
-
-
-
+        # 5. Work Suitability Over Time (if suitable for line plot)
+        fig7, ax7 = plt.subplots(figsize=(10, 4))
+        # Convert 'Work_Suitability' Yes/No to 1/0
+        work_numeric = filtered_df['Work_Suitability'].map({'Yes':1, 'No':0})
+        sns.lineplot(x=filtered_df['Date_Time'], y=work_numeric, marker='o', ax=ax7)
+        ax7.set_title("Work Suitability Over Time (Yes=1, No=0)")
+        ax7.set_xlabel("Date and Time")
+        ax7.set_ylabel("Work Suitability")
+        plt.xticks(rotation=45)
+        st.pyplot(fig7)
 
 def set_purple_background(image_file, intensified=False):
     import base64
@@ -287,7 +297,7 @@ def set_purple_background(image_file, intensified=False):
         }}
 
         .block-container {{
-            background: rgba(64, 0, 90, {overlay_opacity});
+            background: rgba(10, 10, 10, {overlay_opacity});
             backdrop-filter: blur({overlay_blur}px);
             -webkit-backdrop-filter: blur({overlay_blur}px);
             padding: 2rem;
